@@ -244,7 +244,9 @@ configureAndInstall_binutils() {
 	rm -rf $buildFolder/binutils-$binutilsVersion
 	mkdir -p $buildFolder/binutils-$binutilsVersion
 	pushd $buildFolder/binutils-$binutilsVersion
-	CFLAGS="-m${wordSize} -Wformat=0 -Wno-error=deprecated-declarations" $sourceFolder/binutils-$binutilsVersion/configure --prefix="$resultFolder" --target=$compilerTarget $binutilsConfigureFlags
+        #WFLAGS="-Wno-array-bounds -Wno-sometimes-uninitialized -Wno-string-plus-int -Wno-invalid-source-encoding -Wno-empty-body -Wno-shift-overflow -Wno-unused-function -Wno-self-assign" 
+        WFLAGS="-Wno-unused-value"
+	CFLAGS="-m${wordSize} ${WFLAGS} -Wformat=0 -Wno-error=deprecated-declarations" $sourceFolder/binutils-$binutilsVersion/configure --prefix="$resultFolder" --target=$compilerTarget $binutilsConfigureFlags
 	make
 	make install
 	popd
@@ -278,12 +280,12 @@ if [ "$compiler" = "gcc" ]; then
 	mkdir -p $buildFolder/$compiler-$compilerVersion
 	pushd $buildFolder/$compiler-$compilerVersion
 
-	CFLAGS="-m${wordSize}" $sourceFolder/$compiler-$compilerVersion/configure -v --prefix="$resultFolder" --target=$compilerTarget \
+	CFLAGS="-m${wordSize} -fgnu89-inline " $sourceFolder/$compiler-$compilerVersion/configure -v --prefix="$resultFolder" --target=$compilerTarget \
 		--with-gnu-as --with-gnu-ld --with-headers=$resultFolder/$compilerTarget/include \
 		--without-newlib --disable-multilib --disable-libssp --disable-nls --enable-languages="$enableLanguages" \
 		--with-gmp=$buildFolder/gmp-$gmpVersion --enable-decimal-float --with-mpfr=$resultFolder --enable-checking=release \
 		--enable-objc-gc \
-		$compilerConfigureFlags
+		$compilerConfigureFlags MAKEINFO=missing
 	make 
 	make install
 	popd
@@ -326,18 +328,18 @@ stripBinaries() {
 	/bin/echo "done."
 }
 
-"create"$targetPlatform"InterfaceIfNeeded"
-downloadCompilerIfNeeded
+#"create"$targetPlatform"InterfaceIfNeeded"
+#downloadCompilerIfNeeded
        
-/bin/echo -n "Copying the platform interface.  This could take a while.."
-if [ $targetPlatform != "Darwin" ]; then
-	copyPlatformInterface
-fi
-/bin/echo -n "done."
+#/bin/echo -n "Copying the platform interface.  This could take a while.."
+#if [ $targetPlatform != "Darwin" ]; then
+#	copyPlatformInterface
+#fi
+#/bin/echo -n "done."
 
-configureAndInstall_binutils
+#configureAndInstall_binutils
 
-configureAndInstall_gmpAndMpfr
+#configureAndInstall_gmpAndMpfr
 
 configureAndInstall_compiler
 

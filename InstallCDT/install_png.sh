@@ -27,7 +27,7 @@ BASEDIR=/Developer/Cocotron/1.0/$targetPlatform/$targetArchitecture
 
 BUILD=/tmp/build_png
 LIBPNGVERSION=libpng16
-VERSION=1.6.1
+VERSION=1.6.17
 
 $scriptResources/downloadFilesIfNeeded.sh $downloadFolder ftp://ftp.simplesystems.org/pub/libpng/png/src/${LIBPNGVERSION}/libpng-${VERSION}.tar.gz
 
@@ -46,11 +46,11 @@ TARGET=$($GCC -dumpmachine)
 
 
 
-COCOTRON=/Developer/Cocotron/1.0//build/$targetPlatform/$targetArchitecture
-INSTALL_PREFIX=/Developer/Cocotron/1.0/Windows/i386/libpng
-BINARY_PATH=$INSTALL_PREFIX/bin
-INCLUDE_PATH=$INSTALL_PREFIX/include
-LIBRARY_PATH=$INSTALL_PREFIX/lib
+COCOTRON="/Developer/Cocotron/1.0//build/$targetPlatform/$targetArchitecture"
+INSTALL_PREFIX="/Developer/Cocotron/1.0/Windows/i386/libpng"
+BINARY_PATH="$INSTALL_PREFIX/bin"
+INCLUDE_PATH="$INSTALL_PREFIX/include"
+LIBRARY_PATH="$INSTALL_PREFIX/lib"
 
 export LDFLAGS="-L$BASEDIR/zlib-1.2.5/lib"
 export CFLAGS="-I$BASEDIR/zlib-1.2.5/include"
@@ -62,7 +62,9 @@ make -p $LIBRARY_PATH
 make -p $INCLUDE_PATH
 
 echo ./configure --prefix="$INSTALL_PREFIX" -host $TARGET AR=$AR CC=$GCC RANLIB=$RANLIB AS=$AS 
-./configure --prefix="$INSTALL_PREFIX" -host $TARGET -with-zlib-prefix=$BASEDIR/zlib-1.2.5 AR="$AR" CC="$GCC" RANLIB="$RANLIB" AS="$AS"
+./configure --prefix=${INSTALL_PREFIX} --host $TARGET -with-zlib-prefix=$BASEDIR/zlib-1.2.5 AR="$AR" CC="$GCC" RANLIB="$RANLIB" AS="$AS"
 
+echo `pwd`
 make && make install
 
+echo $INSTALL_PREFIX
